@@ -6,7 +6,15 @@ pub async fn get_page(_num: i32, _keyword: &str) -> Option<String> {
         request_uri.push_str(PAGE_PARAM);
         request_uri.push_str(&_num.to_string());
     }
-    let res = make_request(&request_uri).await;
+    let client = reqwest::Client::new();
+    let res = client
+        .get(&request_uri)
+        .header(reqwest::header::USER_AGENT, USER_AGENT_CHROME)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await;
     match res {
         Ok(x) => Some(x),
         Err(x) => {
@@ -25,5 +33,7 @@ async fn make_request(url: &String) -> Result<String, reqwest::Error> {
 }
 
 //TODO use hh api
-const REQUEST_URI: &str =  "https://api.hh.ru/vacancies?area=2&text=";
+const REQUEST_URI: &str = "https://api.hh.ru/vacancies?area=2&text=";
 const PAGE_PARAM: &str = "&page=";
+
+const USER_AGENT_CHROME: &str = "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19";
