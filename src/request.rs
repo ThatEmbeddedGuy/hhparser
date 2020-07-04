@@ -9,7 +9,10 @@ pub async fn get_page(_num: i32, _keyword: &str) -> String {
     let res = make_request(&request_uri).await;
     match res {
         Ok(x) => x,
-        _ => "".to_string(),
+        Err(x) => {
+            println!("{}", x);
+            return "".to_string();
+        }
     }
 }
 
@@ -22,5 +25,5 @@ async fn make_request(url: &String) -> Result<String, reqwest::Error> {
 }
 
 //TODO use hh api
-const REQUEST_URI : &str = "https://spb.hh.ru/search/vacancy?clusters=true&area=2&enable_snippets=true&salary=&st=searchVacancy&text=";
+const REQUEST_URI: &str =  "https://api.hh.ru/vacancies?area=2&text=";
 const PAGE_PARAM: &str = "&page=";
