@@ -13,7 +13,7 @@ pub async fn get_page(_num: i32, _keyword: &str) -> Option<String> {
     match res {
         Ok(x) => Some(x),
         Err(x) => {
-            println!("responce::text parsing error: {}", x);
+            println!("response::text parsing error: {}", x);
             None
         }
     }
