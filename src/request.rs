@@ -31,13 +31,12 @@ async fn make_request(url: &str) -> Option<reqwest::Response> {
         .await;
 
     if let Err(message) = &result {
-        println!("request::get_page error: {}", message);
+        println!("request::make_request error: {}", message);
     }
 
     result.ok()
 }
 
-//TODO use hh api
 const REQUEST_URI: &str = "https://api.hh.ru/vacancies?area=2&text=";
 const PAGE_PARAM: &str = "&page=";
 
