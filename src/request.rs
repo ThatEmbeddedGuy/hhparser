@@ -1,6 +1,6 @@
 extern crate urlencoding;
 
-pub async fn get_page(_num: i32, _keyword: &str) -> String {
+pub async fn get_page(_num: i32, _keyword: &str) -> Option<String> {
     let mut request_uri = REQUEST_URI.to_string() + &urlencoding::encode(_keyword);
     if _num != 0 {
         request_uri.push_str(PAGE_PARAM);
@@ -8,10 +8,10 @@ pub async fn get_page(_num: i32, _keyword: &str) -> String {
     }
     let res = make_request(&request_uri).await;
     match res {
-        Ok(x) => x,
+        Ok(x) => Some(x),
         Err(x) => {
-            println!("{}", x);
-            return "".to_string();
+            println!("request::get_page error: {}", x);
+            None
         }
     }
 }
