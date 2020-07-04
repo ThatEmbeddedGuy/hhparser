@@ -1,5 +1,5 @@
 
-pub fn get_num_of_pages(body: &str) -> i32
+pub fn get_num_of_pages(_body: &str) -> i32
 {
 11
 }
