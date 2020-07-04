@@ -7,17 +7,15 @@ pub async fn get_page(_num: i32, _keyword: &str) -> Option<String> {
         request_uri.push_str(&_num.to_string());
     }
 
-    if let Some(responce) = make_request(&request_uri).await {
-        let res = responce.text().await;
-        match res {
-            Ok(x) => Some(x),
-            Err(x) => {
-                println!("responce::text parsing error: {}", x);
-                None
-            }
+    let response = make_request(&request_uri).await?;
+
+    let res = response.text().await;
+    match res {
+        Ok(x) => Some(x),
+        Err(x) => {
+            println!("responce::text parsing error: {}", x);
+            None
         }
-    } else {
-        None
     }
 }
 
