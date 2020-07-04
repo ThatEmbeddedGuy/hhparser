@@ -6,30 +6,35 @@ pub async fn get_page(_num: i32, _keyword: &str) -> Option<String> {
         request_uri.push_str(PAGE_PARAM);
         request_uri.push_str(&_num.to_string());
     }
-    let client = reqwest::Client::new();
-    let res = client
-        .get(&request_uri)
-        .header(reqwest::header::USER_AGENT, USER_AGENT_CHROME)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await;
-    match res {
-        Ok(x) => Some(x),
-        Err(x) => {
-            println!("request::get_page error: {}", x);
-            None
+
+    if let Some(responce) = make_request(&request_uri).await {
+        let res = responce.text().await;
+        match res {
+            Ok(x) => Some(x),
+            Err(x) => {
+                println!("responce::text parsing error: {}", x);
+                None
+            }
         }
+    } else {
+        None
     }
 }
 
-async fn make_request(url: &String) -> Result<String, reqwest::Error> {
-    let resp = reqwest::get(url).await?;
-    match resp.error_for_status() {
-        Ok(_res) => return Ok(_res.text().await?.to_string()),
-        Err(err) => Err(err),
+async fn make_request(url: &str) -> Option<reqwest::Response> {
+    let client = reqwest::Client::new();
+
+    let result = client
+        .get(url)
+        .header(reqwest::header::USER_AGENT, USER_AGENT_CHROME)
+        .send()
+        .await;
+
+    if let Err(message) = &result {
+        println!("request::get_page error: {}", message);
     }
+
+    result.ok()
 }
 
 //TODO use hh api
