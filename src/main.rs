@@ -52,20 +52,33 @@ struct Opts {
 async fn main() {
     let opts: Opts = Opts::parse();
     println!("Started");
-
+    //TODO restore vacancies from cache
+    let mut all_vacancies = Vec::new();
+    
     if !opts.export_only {
         let search_keyword = opts.keyword;
         if let Some(first) = get_first_page(&search_keyword).await {
             let pages = parser::parse_num_of_pages(&first);
             println!("num of pages parsed: {}", pages);
             let _tasks = get_rest_pages(&search_keyword, pages).await;
-            let _index_pages = futures::future::join_all(_tasks).await;
-            //TODO deserialize vacancies into structures with only necessary fields
+            let _index_pages: std::vec::Vec<String> = futures::future::join_all(_tasks)
+                .await
+                .into_iter()
+                .filter_map(|x| x)
+                .collect();
+
+            let vacancies = _index_pages
+                .into_iter()
+                .map(parser::parse_vacancies_from_string)
+                .flatten()
+                .collect::<Vec<_>>();
+
             //TODO filter already cached vacancies
+            all_vacancies  = vacancies;
         }
     }
 
-    export::export(&opts.fmt);
+    export::export(&opts.fmt,all_vacancies );
 
     println!("Finished");
 }

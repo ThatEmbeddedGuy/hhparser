@@ -15,6 +15,20 @@ pub struct Vacancy {
     full_description: Option<String>,
 }
 
+impl std::fmt::Display for Vacancy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "id : {}, name:  {} , snippet {})", self.id, self.name, self.snippet)
+    }
+}
+
+pub fn parse_vacancies_from_string (data: String) ->std::vec::Vec<Vacancy> 
+{
+let json = parse_json_own(data).unwrap_or_default();
+parse_vacancies_json(&json)
+}
+
+
+
 pub fn parse_vacancies_json(item: &serde_json::Value) -> std::vec::Vec<Vacancy> {
     match item["items"].as_array() {
         Some(items) => items.into_iter().filter_map(parse_vacancy_json).collect(),
