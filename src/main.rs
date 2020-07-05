@@ -16,7 +16,7 @@ async fn get_first_page() -> Option<serde_json::Value>
 }
 
 
-async fn get_rest_pages(_pages:u64) -> std::vec::Vec<impl std::future::Future> {
+async fn get_rest_pages(_pages:u64) -> std::vec::Vec<impl std::future::Future<Output = Option<String>>> {
 
     let index_pages = {
         let mut index_pages_futures = Vec::new();
@@ -38,7 +38,7 @@ async fn main() {
     let pages = parser::parse_num_of_pages(&first.unwrap_or_default());
     println!("num of pages parsed: {}", pages);
     let _tasks = get_rest_pages(pages).await;
-    let _pages = futures::future::join_all(_tasks).await;
+    let _index_pages =futures::future::join_all(_tasks).await;
     //TODO filter already cached vacancies
     //TODO perform requests for new vacancies
     println!("Finished");
