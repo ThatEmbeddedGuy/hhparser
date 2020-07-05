@@ -1,11 +1,12 @@
+extern crate clap;
 extern crate futures;
 extern crate reqwest;
 extern crate tokio;
 extern crate tokio_io;
-extern crate clap;
 
 use clap::Clap;
 
+mod export;
 mod parser;
 mod request;
 
@@ -34,39 +35,37 @@ async fn get_rest_pages(
     index_pages
 }
 
-/// headhunter parser 
+/// headhunter parser
 #[derive(Clap)]
 #[clap(version = "0.1", author = "Kirrill Tikhonov  <yaslimline@gmail.com>")]
 struct Opts {
-    /// Search keyword
+    /// keyword - Search keyword
     #[clap(short, long, default_value = "C++")]
     keyword: String,
     /// export_only - omit search
     #[clap(short, long)]
     export_only: bool,
-    /// Export format ( default - print output)
+    /// fmt - Export format (default - print)
     #[clap(short, long, default_value = "print")]
     fmt: String,
 }
-
-
-
 
 #[tokio::main]
 async fn main() {
     let opts: Opts = Opts::parse();
     println!("Started");
     let search_keyword = opts.keyword;
-        
+
     if let (false, Some(first)) = (opts.export_only, get_first_page(&search_keyword).await) {
         let pages = parser::parse_num_of_pages(&first);
         println!("num of pages parsed: {}", pages);
         let _tasks = get_rest_pages(&search_keyword, pages).await;
         let _index_pages = futures::future::join_all(_tasks).await;
+        //TODO deserialize vacancies into structures with only necessary fields
         //TODO filter already cached vacancies
     }
 
-    //TODO export
+    export::export(&opts.fmt);
 
     println!("Finished");
 }
