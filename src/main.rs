@@ -8,8 +8,8 @@ mod request;
 const TITLE: &str = "C++";
 
 async fn parse_hh_index() {
-    if let Some(first_page) = request::get_page(0, TITLE).await {
-        let _pages = parser::get_num_of_pages(&first_page);
+    if let Some(json) = request::get_page(0, TITLE).await.and_then(parser::parse_json_own) {
+        let _pages = parser::parse_num_of_pages(&json);
     }
     // TODO add return value (list of vacancies)
 }
