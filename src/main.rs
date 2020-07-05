@@ -1,6 +1,7 @@
 extern crate reqwest;
 extern crate tokio;
 extern crate tokio_io;
+extern crate futures;
 
 mod parser;
 mod request;
@@ -35,9 +36,9 @@ async fn main() {
     println!("Started");
     let first = get_first_page().await;
     let pages = parser::parse_num_of_pages(&first.unwrap_or_default());
-    println!("num of pages: {}", pages);
-    let _tasks = get_rest_pages(pages);
-    //TODO pass tasks to thread pool 
+    println!("num of pages parsed: {}", pages);
+    let _tasks = get_rest_pages(pages).await;
+    let _pages = futures::future::join_all(_tasks).await;
     //TODO filter already cached vacancies
     //TODO perform requests for new vacancies
     println!("Finished");
