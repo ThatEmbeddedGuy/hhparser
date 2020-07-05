@@ -10,8 +10,6 @@ mod export;
 mod parser;
 mod request;
 
-const TITLE: &str = "C++";
-
 async fn get_first_page(_keyword: &str) -> Option<serde_json::Value> {
     request::get_page(0, _keyword.to_string())
         .await
