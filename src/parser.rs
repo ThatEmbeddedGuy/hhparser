@@ -32,10 +32,10 @@ fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
             salary_currency: salary["currency"].as_str().unwrap_or_default().to_string(),
             salary_gross: salary["gross"].as_bool().unwrap_or_default(),
             url: item["url"].as_str().unwrap_or_default().to_string(),
-            snippet: item["snippet"].as_object().unwrap()["requirement"]
+            snippet: item["snippet"].as_object().unwrap()["requirement"] // FIXME unwarp may panic with invalid json
                 .as_str()
                 .unwrap_or_default()
-                .to_string(), // FIXME unwarp may panic with invalid json
+                .to_string(),
             full_description: None,
         };
         return Some(vac);
@@ -105,7 +105,6 @@ fn pase_vacancy() {
 
     assert_eq!(parse_vacancy_json(&json).unwrap(), vac);
 }
-
 
 #[test]
 fn pase_vacancies() {
