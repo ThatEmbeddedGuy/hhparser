@@ -52,15 +52,17 @@ struct Opts {
 async fn main() {
     let opts: Opts = Opts::parse();
     println!("Started");
-    let search_keyword = opts.keyword;
 
-    if let (false, Some(first)) = (opts.export_only, get_first_page(&search_keyword).await) {
-        let pages = parser::parse_num_of_pages(&first);
-        println!("num of pages parsed: {}", pages);
-        let _tasks = get_rest_pages(&search_keyword, pages).await;
-        let _index_pages = futures::future::join_all(_tasks).await;
-        //TODO deserialize vacancies into structures with only necessary fields
-        //TODO filter already cached vacancies
+    if !opts.export_only {
+        let search_keyword = opts.keyword;
+        if let Some(first) = get_first_page(&search_keyword).await {
+            let pages = parser::parse_num_of_pages(&first);
+            println!("num of pages parsed: {}", pages);
+            let _tasks = get_rest_pages(&search_keyword, pages).await;
+            let _index_pages = futures::future::join_all(_tasks).await;
+            //TODO deserialize vacancies into structures with only necessary fields
+            //TODO filter already cached vacancies
+        }
     }
 
     export::export(&opts.fmt);
