@@ -3,7 +3,7 @@ extern crate serde_json;
 //TODO use serde deserialze when it will resolve the conflict with clap
 
 #[derive(Debug, PartialEq)]
-struct Vacancy {
+pub struct Vacancy {
     id: String,
     name: String,
     salary_from: Option<u64>,
@@ -15,7 +15,14 @@ struct Vacancy {
     full_description: Option<String>,
 }
 
-fn parse_vacancy_json(item: serde_json::Value) -> Option<Vacancy> {
+pub fn parse_vacancies_json(item: &serde_json::Value) -> std::vec::Vec<Vacancy> {
+    match item["items"].as_array() {
+        Some(items) => items.into_iter().filter_map(parse_vacancy_json).collect(),
+        None => Vec::new(),
+    }
+}
+
+fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
     if let Some(salary) = item["salary"].as_object() {
         let vac = Vacancy {
             id: item["id"].as_str().unwrap_or_default().to_string(),
@@ -96,5 +103,26 @@ fn pase_vacancy() {
         full_description: None,
     };
 
-    assert_eq!(parse_vacancy_json(json).unwrap(), vac);
+    assert_eq!(parse_vacancy_json(&json).unwrap(), vac);
+}
+
+
+#[test]
+fn pase_vacancies() {
+    let test_data = include_str!("test_full.json");
+    let json = serde_json::from_str(test_data).unwrap();
+
+    let vac = Vacancy {
+        id: "1".to_string(),
+        name: "2".to_string(),
+        salary_from: Some(1),
+        salary_to: None,
+        salary_currency: "BYR".to_string(),
+        salary_gross: true,
+        url: "https://api.hh.ru/vacancies/41".to_string(),
+        snippet: "Наши преимущества:".to_string(),
+        full_description: None,
+    };
+
+    assert_eq!(parse_vacancies_json(&json)[0], vac);
 }
