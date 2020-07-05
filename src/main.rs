@@ -7,17 +7,15 @@ mod request;
 
 const TITLE: &str = "C++";
 
-async fn parse_hh_index() -> std::vec::Vec<impl std::future::Future> {
-    let json = match request::get_page(0, TITLE)
+async fn get_first_page() -> Option<serde_json::Value>
+{
+    request::get_page(0, TITLE)
         .await
         .and_then(parser::parse_json_own)
-    {
-        Some(value) => value,
-        _ => return Vec::new(),
-    };
+}
 
-    let _pages = parser::parse_num_of_pages(&json);
-    println!("First page parsed, num of pages: {}", _pages);
+
+async fn get_rest_pages(_pages:u64) -> std::vec::Vec<impl std::future::Future> {
 
     let index_pages = {
         let mut index_pages_futures = Vec::new();
@@ -35,7 +33,11 @@ async fn parse_hh_index() -> std::vec::Vec<impl std::future::Future> {
 #[tokio::main]
 async fn main() {
     println!("Started");
-    let indexes =  parse_hh_index().await;
+    let first = get_first_page().await;
+    let pages = parser::parse_num_of_pages(&first.unwrap_or_default());
+    println!("num of pages: {}", pages);
+    let _tasks = get_rest_pages(pages);
+    //TODO pass tasks to thread pool 
     //TODO filter already cached vacancies
     //TODO perform requests for new vacancies
     println!("Finished");
