@@ -37,7 +37,7 @@ async fn get_rest_pages(
 
 /// headhunter parser
 #[derive(Clap)]
-#[clap(version = "0.1", author = "Kirrill Tikhonov  <yaslimline@gmail.com>")]
+#[clap(version = "0.1", author = "Kirill Tikhonov  <yaslimline@gmail.com>")]
 struct Opts {
     /// keyword - Search keyword
     #[clap(short, long, default_value = "C++")]
