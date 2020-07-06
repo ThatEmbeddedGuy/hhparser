@@ -35,9 +35,9 @@ fn txt_file_export(data: &[HashMap<String, String>]) -> std::io::Result<()> {
     Ok(())
 }
 
-fn json_file_export(data: Vec<HashMap<String, String>>) -> std::io::Result<()> {
+fn json_file_export(data:  &[HashMap<String, String>]) -> std::io::Result<()> {
     let file = File::create("data.json")?;
-    serde_json::to_writer(file, &data)?;
+    serde_json::to_writer(file, data)?;
     Ok(())
 }
 
