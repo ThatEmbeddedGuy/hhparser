@@ -17,20 +17,16 @@ async fn get_first_page(_keyword: &str) -> Option<serde_json::Value> {
 }
 
 async fn get_rest_pages(
-    _keyword: &String,
+    _keyword: &str,
     _pages: u64,
 ) -> std::vec::Vec<impl std::future::Future<Output = Option<String>>> {
-    let index_pages = {
         let mut index_pages_futures = Vec::new();
         let mut page = 0;
         index_pages_futures.resize_with(_pages as usize, || {
             page += 1;
-            request::get_page(page, _keyword.clone())
+            request::get_page(page, _keyword.to_string())
         });
         index_pages_futures
-    };
-
-    index_pages
 }
 
 /// headhunter parser

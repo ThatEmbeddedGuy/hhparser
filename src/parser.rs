@@ -32,7 +32,7 @@ pub fn parse_vacancies_string(data: String) -> std::vec::Vec<Vacancy> {
 
 pub fn parse_vacancies_json(item: &serde_json::Value) -> std::vec::Vec<Vacancy> {
     match item["items"].as_array() {
-        Some(items) => items.into_iter().filter_map(parse_vacancy_json).collect(),
+        Some(items) => items.iter().filter_map(parse_vacancy_json).collect(),
         None => Vec::new(),
     }
 }
@@ -62,9 +62,7 @@ fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
             .to_string(),
         full_description: None,
     };
-    return Some(vac);
-    //   }
-    //  None
+    Some(vac)
 }
 
 pub fn into_json(_body: String) -> Option<serde_json::Value> {
