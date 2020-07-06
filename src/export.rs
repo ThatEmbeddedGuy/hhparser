@@ -47,7 +47,6 @@ fn print<T: std::io::Write>(
     data: &[HashMap<String, String>],
 ) -> std::io::Result<()> {
     for map in data {
-        writeln!(sink, "\r\n\r\n")?;
         for (key, value) in map {
             writeln!(sink, "{} = {}  ", key, value)?;
         }
