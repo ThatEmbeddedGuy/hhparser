@@ -1,7 +1,7 @@
 //FIXME it just prints debug
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{self, Write};
+use std::io::{self};
 
 ///Export vector of dictionaries (vacancies)
 /// # Arguments
@@ -30,13 +30,13 @@ pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
 }
 
 fn txt_file_export(data: &Vec<HashMap<String, String>>) -> std::io::Result<()> {
-    let mut file = File::create("data.txt")?;
+    let file = File::create("data.txt")?;
     print(file, &data)?;
     Ok(())
 }
 
 fn json_file_export(data: Vec<HashMap<String, String>>) -> std::io::Result<()> {
-    let mut file = File::create("data.json")?;
+    let file = File::create("data.json")?;
     serde_json::to_writer(file, &data)?;
     Ok(())
 }
