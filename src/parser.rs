@@ -45,7 +45,7 @@ fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
             x["currency"].as_str().unwrap_or_default().to_string(),
             x["gross"].as_bool().unwrap_or_default(),
         ),
-        _ => (None, None, "".to_string(), true),
+        _ => (None, None, String::from(""), true),
     };
 
     let vac = Vacancy {
@@ -112,14 +112,14 @@ fn parse_vacancy() {
     let json = serde_json::from_str(test_data).unwrap();
 
     let vac = Vacancy {
-        id: "1".to_string(),
-        name: "2".to_string(),
+        id: String::from("1"),
+        name: String::from("2"),
         salary_from: Some(1),
         salary_to: None,
-        salary_currency: "BYR".to_string(),
+        salary_currency: String::from("BYR"),
         salary_gross: true,
-        url: "https://api.hh.ru/vacancies/41".to_string(),
-        snippet: "Наши преимущества:".to_string(),
+        url: String::from("https://api.hh.ru/vacancies/41"),
+        snippet: String::from("Наши преимущества:"),
         full_description: None,
     };
 
@@ -132,14 +132,14 @@ fn parse_vacancies() {
     let json = serde_json::from_str(test_data).unwrap();
 
     let vac = Vacancy {
-        id: "1".to_string(),
-        name: "2".to_string(),
+        id: String::from("1"),
+        name: String::from("2"),
         salary_from: Some(1),
         salary_to: None,
-        salary_currency: "BYR".to_string(),
+        salary_currency: String::from("BYR"),
         salary_gross: true,
-        url: "https://api.hh.ru/vacancies/41".to_string(),
-        snippet: "Наши преимущества:".to_string(),
+        url: String::from("https://api.hh.ru/vacancies/41"),
+        snippet: String::from("Наши преимущества:"),
         full_description: None,
     };
 
