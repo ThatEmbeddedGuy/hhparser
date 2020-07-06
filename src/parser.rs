@@ -45,7 +45,7 @@ fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
             x["currency"].as_str().unwrap_or_default().to_string(),
             x["gross"].as_bool().unwrap_or_default(),
         ),
-        _ => (None, None, String::from(""), true),
+        _ => (None, None, String::new(), true),
     };
 
     let vac = Vacancy {
