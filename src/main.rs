@@ -43,9 +43,12 @@ struct Opts {
     /// export_only - omit search
     #[clap(short, long)]
     export_only: bool,
-    /// fmt - Export format (default - print)
-    #[clap(short, long, default_value = "print")]
+    /// fmt - Export format [print|txt|json]
+    #[clap(long, default_value = "print")]
     fmt: String,
+    /// filename - Export filename, used in txt/json format
+    #[clap(short, long, default_value = "export.txt")]
+    filename: String,
 }
 
 #[tokio::main]
@@ -59,23 +62,23 @@ async fn main() {
         let search_keyword = opts.keyword;
         //Get first page synchronously, just to get number of pages
         if let Some(first) = get_first_page(&search_keyword).await {
-            let pages = parser::parse_num_of_pages(&first);
+            let pages_total = parser::parse_num_of_pages(&first);
             let first_page_vacancies = parser::parse_vacancies_json(&first);
             println!(
                 "First page parsed: num of pages: {} , vacancies: {}",
-                pages,
+                pages_total,
                 first_page_vacancies.len()
             );
 
             // Get rest index pages simultaneously
-            let _tasks = get_rest_pages(&search_keyword, pages).await;
+            let _tasks = get_rest_pages(&search_keyword, pages_total).await;
             let _index_pages: std::vec::Vec<String> = futures::future::join_all(_tasks)
                 .await
                 .into_iter()
                 .filter_map(|x| x)
                 .collect();
 
-            //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid
+            //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid ones
             let rest_pages_vacancies = _index_pages
                 .into_iter()
                 .map(parser::parse_vacancies_string)
@@ -96,7 +99,7 @@ async fn main() {
                 ("ID".to_string(), vacancy.id),
                 ("url".to_string(), vacancy.url),
                 ("name".to_string(), vacancy.name),
-                ("Description".to_string(), vacancy.snippet),
+                ("description".to_string(), vacancy.snippet),
                 (
                     "from".to_string(),
                     vacancy
@@ -115,8 +118,7 @@ async fn main() {
             .collect()
         })
         .collect::<Vec<_>>();
-
-    export::export(&opts.fmt, vacancies_key_value);
+    export::export(&opts.fmt,&opts.filename, vacancies_key_value);
 
     println!("Finished");
 }
