@@ -46,7 +46,6 @@ async fn make_request(url: &str) -> Option<reqwest::Response> {
         .header(reqwest::header::USER_AGENT, USER_AGENT_CHROME)
         .send()
         .await;
-    //TODO retry for 408 429 480 5XX
     if let Err(message) = &result {
         println!("request::make_request error: {}", message);
     }
