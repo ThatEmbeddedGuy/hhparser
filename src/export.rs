@@ -1,22 +1,30 @@
 //FIXME it just prints debug
 use std::collections::HashMap;
 use std::fs::File;
+use std::io::{self, Write};
 
 pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
     match fmt {
-        "print" => print(&data),
-        "txt" => {
-            txt_file_export(data).unwrap_or_else(|err| println!("txt file export error : {}", err))
+        "print" => {
+            print(io::stdout(), &data)
+                .unwrap_or_else(|err| println!("direct print export error: {}", err));
         }
+
+        "txt" => {
+            txt_file_export(&data)
+                .unwrap_or_else(|err| println!("txt file export error : {}", err));
+        }
+
         "json" => json_file_export(data)
             .unwrap_or_else(|err| println!("json file export error : {}", err)),
+
         _ => println!("export format not supported : {}", fmt),
     }
 }
 
-fn txt_file_export(data: Vec<HashMap<String, String>>) -> std::io::Result<()> {
+fn txt_file_export(data: &Vec<HashMap<String, String>>) -> std::io::Result<()> {
     let mut file = File::create("data.txt")?;
-    //TODO implement  txt file writer
+    print(file, &data)?;
     Ok(())
 }
 
@@ -26,15 +34,17 @@ fn json_file_export(data: Vec<HashMap<String, String>>) -> std::io::Result<()> {
     Ok(())
 }
 
-
-fn print(data:  &Vec<HashMap<String, String>>)
-{ 
+// Export generic function, can be used to print to any sink -  file/stdio
+fn print<T: std::io::Write>(
+    mut sink: T,
+    data: &Vec<HashMap<String, String>>,
+) -> std::io::Result<()> {
     for map in data {
-        print!("\r\n\r\n");
+        writeln!(sink, "\r\n\r\n")?;
         for (key, value) in map {
-            println!("{} = {}  ", key, value);
+            writeln!(sink, "{} = {}  ", key, value)?;
         }
-        print!("\r\n\r\n");
+        writeln!(sink, "\r\n")?;
     }
-
+    Ok(())
 }
