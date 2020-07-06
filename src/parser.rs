@@ -38,24 +38,33 @@ pub fn parse_vacancies_json(item: &serde_json::Value) -> std::vec::Vec<Vacancy> 
 }
 
 fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
-    if let Some(salary) = item["salary"].as_object() {
-        let vac = Vacancy {
-            id: item["id"].as_str().unwrap_or_default().to_string(),
-            name: item["name"].as_str().unwrap_or_default().to_string(),
-            salary_from: salary["from"].as_u64(),
-            salary_to: salary["to"].as_u64(),
-            salary_currency: salary["currency"].as_str().unwrap_or_default().to_string(),
-            salary_gross: salary["gross"].as_bool().unwrap_or_default(),
-            url: item["url"].as_str().unwrap_or_default().to_string(),
-            snippet: item["snippet"].as_object().unwrap()["requirement"] // FIXME unwarp may panic with invalid json
-                .as_str()
-                .unwrap_or_default()
-                .to_string(),
-            full_description: None,
-        };
-        return Some(vac);
-    }
-    return None;
+    let (to, from, currency, gross) = match item["salary"].as_object() {
+        Some(x) => (
+            x["from"].as_u64(),
+            x["to"].as_u64(),
+            x["currency"].as_str().unwrap_or_default().to_string(),
+            x["gross"].as_bool().unwrap_or_default(),
+        ),
+        _ => (None, None, "".to_string(), true),
+    };
+
+    let vac = Vacancy {
+        id: item["id"].as_str().unwrap_or_default().to_string(),
+        name: item["name"].as_str().unwrap_or_default().to_string(),
+        salary_from: to,
+        salary_to: from,
+        salary_currency: currency,
+        salary_gross: gross,
+        url: item["url"].as_str().unwrap_or_default().to_string(),
+        snippet: item["snippet"].as_object().unwrap()["requirement"] // FIXME unwarp may panic with invalid json
+            .as_str()
+            .unwrap_or_default()
+            .to_string(),
+        full_description: None,
+    };
+    return Some(vac);
+    //   }
+    //  None
 }
 
 pub fn into_json(_body: String) -> Option<serde_json::Value> {

@@ -22,7 +22,7 @@ pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
                 .unwrap_or_else(|err| println!("txt file export error : {}", err));
         }
 
-        "json" => json_file_export(data)
+        "json" => json_file_export(&data)
             .unwrap_or_else(|err| println!("json file export error : {}", err)),
 
         _ => println!("export format not supported : {}", fmt),
