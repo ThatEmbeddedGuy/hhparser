@@ -5,13 +5,11 @@ use std::io::{self, Write};
 
 ///Export vector of dictionaries (vacancies)
 /// # Arguments
-/// * `fmt`  - format  parameter.  values:
-///
-///      print - just prints to stdout
-///
-///      txt  - prints to data,txt file
-///
-///      json - prints to data.json in json format  
+/// * `fmt`  - format  parameter.  values:\
+///         print - just prints to stdout\
+///         txt  - prints to data,txt file\
+///         json - prints to data.json in json format  \
+/// * `data`  - vector of vacancies, represented in key/value:
 pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
     match fmt {
         "print" => {
