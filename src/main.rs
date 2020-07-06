@@ -60,8 +60,14 @@ async fn main() {
         //Get first page synchronously, just to get number of pages
         if let Some(first) = get_first_page(&search_keyword).await {
             let pages = parser::parse_num_of_pages(&first);
-            println!("num of pages parsed: {}", pages);
-            // Get all index pages simultaneously
+            let first_page_vacancies = parser::parse_vacancies_json(&first);
+            println!(
+                "First page parsed: num of pages: {} , vacancies: {}",
+                pages,
+                first_page_vacancies.len()
+            );
+
+            // Get rest index pages simultaneously
             let _tasks = get_rest_pages(&search_keyword, pages).await;
             let _index_pages: std::vec::Vec<String> = futures::future::join_all(_tasks)
                 .await
@@ -70,14 +76,15 @@ async fn main() {
                 .collect();
 
             //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid
-            let vacancies = _index_pages
+            let rest_pages_vacancies = _index_pages
                 .into_iter()
                 .map(parser::parse_vacancies_string)
                 .flatten()
                 .collect::<Vec<_>>();
 
             //TODO filter already cached vacancies
-            all_vacancies = vacancies;
+            all_vacancies.extend(first_page_vacancies.into_iter());
+            all_vacancies.extend(rest_pages_vacancies.into_iter());
         }
     }
     // Convert vector of parsed structures into vector of  generic key/value maps
