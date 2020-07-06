@@ -95,6 +95,7 @@ async fn main() {
             [
                 ("ID".to_string(), vacancy.id),
                 ("url".to_string(), vacancy.url),
+                ("name".to_string(), vacancy.name),
                 ("Description".to_string(), vacancy.snippet),
                 (
                     "from".to_string(),
