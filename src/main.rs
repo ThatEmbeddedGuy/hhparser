@@ -62,7 +62,7 @@ async fn main() {
                 first_page_vacancies.len()
             );
 
-            // Get rest index pages simultaneously
+            // Get rest index pages simultaneously, filter invalid ones
             let _tasks = get_rest_pages(&search_keyword, pages_total).await;
             let _index_pages: std::vec::Vec<String> = futures::future::join_all(_tasks)
                 .await
@@ -70,7 +70,7 @@ async fn main() {
                 .filter_map(|x| x)
                 .collect();
 
-            //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid ones
+            //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid ones while parsing
             let rest_pages_vacancies = _index_pages
                 .into_iter()
                 .map(parser::parse_vacancies_string)
@@ -103,7 +103,10 @@ async fn main() {
                     String::from("salary to"),
                     vacancy.salary_to.map(|x| x.to_string()).unwrap_or_default(),
                 ),
-                (String::from("salary gross"), vacancy.salary_gross.to_string()),
+                (
+                    String::from("salary gross"),
+                    vacancy.salary_gross.to_string(),
+                ),
             ]
             .iter()
             .cloned()
