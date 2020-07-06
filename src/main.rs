@@ -88,22 +88,22 @@ async fn main() {
         .into_iter()
         .map(|vacancy| {
             [
-                (String::from("ID"), vacancy.id),
+                (String::from("id"), vacancy.id),
                 (String::from("url"), vacancy.url),
                 (String::from("name"), vacancy.name),
                 (String::from("description"), vacancy.snippet),
                 (
-                    String::from("from"),
+                    String::from("salary from"),
                     vacancy
                         .salary_from
                         .map(|x| x.to_string())
                         .unwrap_or_default(),
                 ),
                 (
-                    String::from("to"),
+                    String::from("salary to"),
                     vacancy.salary_to.map(|x| x.to_string()).unwrap_or_default(),
                 ),
-                (String::from("gross"), vacancy.salary_gross.to_string()),
+                (String::from("salary gross"), vacancy.salary_gross.to_string()),
             ]
             .iter()
             .cloned()
