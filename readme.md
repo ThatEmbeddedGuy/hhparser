@@ -1,4 +1,4 @@
-hh.ru parser. Is uses api and concurrently parses all vacancies based on a query.
+hh.ru parser. It uses api and concurrently parses all vacancies based on a query.
 
 ----------
 Supported export formats :
