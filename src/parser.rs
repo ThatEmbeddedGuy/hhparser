@@ -25,8 +25,8 @@ impl std::fmt::Display for Vacancy {
     }
 }
 
-pub fn parse_vacancies_from_string(data: String) -> std::vec::Vec<Vacancy> {
-    let json = parse_json_own(data).unwrap_or_default();
+pub fn parse_vacancies_string(data: String) -> std::vec::Vec<Vacancy> {
+    let json = into_json(data).unwrap_or_default();
     parse_vacancies_json(&json)
 }
 
@@ -58,17 +58,15 @@ fn parse_vacancy_json(item: &serde_json::Value) -> Option<Vacancy> {
     return None;
 }
 
-#[allow(dead_code)]
-pub fn parse_json_own(_body: String) -> Option<serde_json::Value> {
+pub fn into_json(_body: String) -> Option<serde_json::Value> {
     serde_json::from_str(&_body).ok()
 }
 
 #[allow(dead_code)]
-pub fn parse_json(_body: &str) -> Option<serde_json::Value> {
+pub fn to_json(_body: &str) -> Option<serde_json::Value> {
     serde_json::from_str(&_body).ok()
 }
 
-#[allow(dead_code)]
 pub fn parse_num_of_pages(root: &serde_json::Value) -> u64 {
     if let Some(value) = root.get("pages").and_then(|node| node.as_u64()) {
         value
@@ -78,8 +76,8 @@ pub fn parse_num_of_pages(root: &serde_json::Value) -> u64 {
 }
 
 #[allow(dead_code)]
-pub fn get_num_of_pages(_body: &str) -> u64 {
-    if let Some(root) = parse_json(_body) {
+pub fn parse_num_of_pages_str(_body: &str) -> u64 {
+    if let Some(root) = to_json(_body) {
         parse_num_of_pages(&root)
     } else {
         0
@@ -88,21 +86,21 @@ pub fn get_num_of_pages(_body: &str) -> u64 {
 
 #[test]
 fn invalid_json() {
-    assert_eq!(get_num_of_pages("some"), 0);
+    assert_eq!(parse_num_of_pages_str("some"), 0);
 }
 
 #[test]
 fn empty_string() {
-    assert_eq!(get_num_of_pages(""), 0);
+    assert_eq!(parse_num_of_pages_str(""), 0);
 }
 
 #[test]
 fn correct_json() {
-    assert_eq!(get_num_of_pages("{\"pages\": 11}"), 11);
+    assert_eq!(parse_num_of_pages_str("{\"pages\": 11}"), 11);
 }
 
 #[test]
-fn pase_vacancy() {
+fn parse_vacancy() {
     let test_data = include_str!("test_one_item.json");
     let json = serde_json::from_str(test_data).unwrap();
 
@@ -122,7 +120,7 @@ fn pase_vacancy() {
 }
 
 #[test]
-fn pase_vacancies() {
+fn parse_vacancies() {
     let test_data = include_str!("test_full.json");
     let json = serde_json::from_str(test_data).unwrap();
 

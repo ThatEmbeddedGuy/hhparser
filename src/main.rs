@@ -13,7 +13,7 @@ mod request;
 async fn get_first_page(_keyword: &str) -> Option<serde_json::Value> {
     request::get_page(0, _keyword.to_string())
         .await
-        .and_then(parser::parse_json_own)
+        .and_then(parser::into_json)
 }
 
 async fn get_rest_pages(
@@ -72,7 +72,7 @@ async fn main() {
             //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid
             let vacancies = _index_pages
                 .into_iter()
-                .map(parser::parse_vacancies_from_string)
+                .map(parser::parse_vacancies_string)
                 .flatten()
                 .collect::<Vec<_>>();
 
