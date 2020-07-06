@@ -29,9 +29,9 @@ pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
     }
 }
 
-fn txt_file_export(data: &Vec<HashMap<String, String>>) -> std::io::Result<()> {
+fn txt_file_export(data: &[HashMap<String, String>]) -> std::io::Result<()> {
     let file = File::create("data.txt")?;
-    print(file, &data)?;
+    print(file, data)?;
     Ok(())
 }
 
@@ -44,7 +44,7 @@ fn json_file_export(data: Vec<HashMap<String, String>>) -> std::io::Result<()> {
 // Export generic function, can be used to print to any sink -  file/stdio
 fn print<T: std::io::Write>(
     mut sink: T,
-    data: &Vec<HashMap<String, String>>,
+    data: &[HashMap<String, String>],
 ) -> std::io::Result<()> {
     for map in data {
         writeln!(sink, "\r\n\r\n")?;
