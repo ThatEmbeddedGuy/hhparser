@@ -20,13 +20,9 @@ async fn get_rest_pages(
     _keyword: &str,
     _pages: u64,
 ) -> std::vec::Vec<impl std::future::Future<Output = Option<String>>> {
-        let mut index_pages_futures = Vec::new();
-        let mut page = 0;
-        index_pages_futures.resize_with(_pages as usize, || {
-            page += 1;
-            request::get_page(page, _keyword.to_string())
-        });
-        index_pages_futures
+    (1.._pages)
+        .map(|page| request::get_page(page as i32, _keyword.to_string()))
+        .collect::<Vec<_>>()
 }
 
 /// headhunter parser
@@ -114,7 +110,7 @@ async fn main() {
             .collect()
         })
         .collect::<Vec<_>>();
-    export::export(&opts.fmt,&opts.filename, vacancies_key_value);
+    export::export(&opts.fmt, &opts.filename, vacancies_key_value);
 
     println!("Finished");
 }
