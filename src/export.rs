@@ -3,6 +3,15 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, Write};
 
+///Export vector of dictionaries (vacancies)
+/// # Arguments
+/// * `fmt`  - format  parameter.  values:
+///
+///      print - just prints to stdout
+///
+///      txt  - prints to data,txt file
+///
+///      json - prints to data.json in json format  
 pub fn export(fmt: &str, data: Vec<HashMap<String, String>>) {
     match fmt {
         "print" => {
