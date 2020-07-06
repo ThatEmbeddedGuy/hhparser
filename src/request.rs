@@ -1,5 +1,21 @@
 extern crate urlencoding;
 
+async fn request_with_retry(url: &str) -> Option<reqwest::Response> {
+    if let Some(first_try) = make_request(url).await {
+        let code = first_try.status().as_u16();
+        //TODO create array of failover codes
+        //All codes except 5xx/408/480/429 are valid
+        if code != 480 || code != 408 || code != 429 || (code < 500 && code >= 600) {
+            return Some(first_try);
+        }
+        println!("Request retry, code: {} url :{} ", code, url);
+    } else {
+        println!("Request retry without answer code,  url :{} ", url);
+    }
+    //Second try
+    make_request(url).await
+}
+
 pub async fn get_page(_num: i32, _keyword: String) -> Option<String> {
     println!("get page method: page - {} ", _num);
     let pages_suffix = if _num == 0 {
@@ -10,7 +26,7 @@ pub async fn get_page(_num: i32, _keyword: String) -> Option<String> {
     let request_uri: String =
         String::from(REQUEST_URI) + &urlencoding::encode(&_keyword) + &pages_suffix;
 
-    let response = make_request(&request_uri).await?;
+    let response = request_with_retry(&request_uri).await?;
 
     let res = response.text().await;
     match res {
