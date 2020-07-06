@@ -14,16 +14,16 @@ use std::io::{self};
 pub fn export(fmt: &str, filename: &str, data: &[HashMap<String, String>]) {
     match fmt {
         "print" => {
-            print(io::stdout(), &data)
+            print(io::stdout(), data)
                 .unwrap_or_else(|err| println!("direct print export error: {}", err));
         }
 
         "txt" => {
-            txt_file_export(filename, &data)
+            txt_file_export(filename, data)
                 .unwrap_or_else(|err| println!("txt file export error : {}", err));
         }
 
-        "json" => json_file_export(filename, &data)
+        "json" => json_file_export(filename, data)
             .unwrap_or_else(|err| println!("json file export error : {}", err)),
 
         _ => println!("export format not supported : {}", fmt),
