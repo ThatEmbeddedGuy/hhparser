@@ -110,7 +110,7 @@ async fn main() {
             .collect()
         })
         .collect::<Vec<_>>();
-    export::export(&opts.fmt, &opts.filename, vacancies_key_value);
+    export::export(&opts.fmt, &opts.filename, &vacancies_key_value);
 
     println!("Finished");
 }

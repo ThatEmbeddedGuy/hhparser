@@ -10,8 +10,8 @@ use std::io::{self};
 ///         txt  - prints to data,txt file
 ///         json - prints to data.json in json format
 /// * `filename`  - export filename used in txt/json formats:
-/// * `data`  - vector of vacancies, represented in key/value:
-pub fn export(fmt: &str, filename: &str, data: Vec<HashMap<String, String>>) {
+/// * `data`  - slice of vacancies, represented in key/value:
+pub fn export(fmt: &str, filename: &str, data: &[HashMap<String, String>]) {
     match fmt {
         "print" => {
             print(io::stdout(), &data)
