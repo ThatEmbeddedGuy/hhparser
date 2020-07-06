@@ -54,12 +54,14 @@ async fn main() {
     println!("Started");
     //TODO restore vacancies from cache
     let mut all_vacancies = Vec::new();
-    
+
     if !opts.export_only {
         let search_keyword = opts.keyword;
+        //Get first page synchronously, just to get number of pages
         if let Some(first) = get_first_page(&search_keyword).await {
             let pages = parser::parse_num_of_pages(&first);
             println!("num of pages parsed: {}", pages);
+            // Get all index pages simultaneously
             let _tasks = get_rest_pages(&search_keyword, pages).await;
             let _index_pages: std::vec::Vec<String> = futures::future::join_all(_tasks)
                 .await
@@ -67,6 +69,7 @@ async fn main() {
                 .filter_map(|x| x)
                 .collect();
 
+            //Parse all vacancies from all pages, flatten all vacancies in one list, filter invalid
             let vacancies = _index_pages
                 .into_iter()
                 .map(parser::parse_vacancies_from_string)
@@ -74,11 +77,38 @@ async fn main() {
                 .collect::<Vec<_>>();
 
             //TODO filter already cached vacancies
-            all_vacancies  = vacancies;
+            all_vacancies = vacancies;
         }
     }
+    // Convert vector of parsed structures into vector of  generic key/value maps
+    // Export shouldn't rely on vacancy structure
+    let vacancies_key_value = all_vacancies
+        .into_iter()
+        .map(|vacancy| {
+            [
+                ("ID".to_string(), vacancy.id),
+                ("url".to_string(), vacancy.url),
+                ("Description".to_string(), vacancy.snippet),
+                (
+                    "from".to_string(),
+                    vacancy
+                        .salary_from
+                        .map(|x| x.to_string())
+                        .unwrap_or_default(),
+                ),
+                (
+                    "to".to_string(),
+                    vacancy.salary_to.map(|x| x.to_string()).unwrap_or_default(),
+                ),
+                ("gross".to_string(), vacancy.salary_gross.to_string()),
+            ]
+            .iter()
+            .cloned()
+            .collect()
+        })
+        .collect::<Vec<_>>();
 
-    export::export(&opts.fmt,all_vacancies );
+    export::export(&opts.fmt, vacancies_key_value);
 
     println!("Finished");
 }

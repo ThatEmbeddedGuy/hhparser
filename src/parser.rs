@@ -4,30 +4,31 @@ extern crate serde_json;
 
 #[derive(Debug, PartialEq)]
 pub struct Vacancy {
-    id: String,
-    name: String,
-    salary_from: Option<u64>,
-    salary_to: Option<u64>,
-    salary_currency: String,
-    salary_gross: bool,
-    url: String,
-    snippet: String,
-    full_description: Option<String>,
+    pub id: String,
+    pub name: String,
+    pub salary_from: Option<u64>,
+    pub salary_to: Option<u64>,
+    pub salary_currency: String,
+    pub salary_gross: bool,
+    pub url: String,
+    pub snippet: String,
+    pub full_description: Option<String>,
 }
 
 impl std::fmt::Display for Vacancy {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "id : {}, name:  {} , snippet {})", self.id, self.name, self.snippet)
+        write!(
+            f,
+            "id : {}, name:  {} , snippet {})",
+            self.id, self.name, self.snippet
+        )
     }
 }
 
-pub fn parse_vacancies_from_string (data: String) ->std::vec::Vec<Vacancy> 
-{
-let json = parse_json_own(data).unwrap_or_default();
-parse_vacancies_json(&json)
+pub fn parse_vacancies_from_string(data: String) -> std::vec::Vec<Vacancy> {
+    let json = parse_json_own(data).unwrap_or_default();
+    parse_vacancies_json(&json)
 }
-
-
 
 pub fn parse_vacancies_json(item: &serde_json::Value) -> std::vec::Vec<Vacancy> {
     match item["items"].as_array() {
